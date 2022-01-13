@@ -1,0 +1,37 @@
+name: Sync
+
+on:
+  push:
+    branches:
+      - sandbox
+  # schedule:
+  #   - cron: '0 0 * * *'
+
+jobs:
+  synchronize:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set Git user
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Add upstream
+      run: |
+        git remote add upstream https://github.com/junegunn/fzf.vim.git
+        git remote set-branches upstream master
+        git fetch upstream
+
+    - name: Merge
+      run: |
+        git merge --no-edit upstream/master
+
+    - name: Push
+      run: |
+        git push
