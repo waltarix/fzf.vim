@@ -784,7 +784,7 @@ function! fzf#vim#command_history(...)
   return s:fzf('history-command', {
   \ 'source':  s:history_source(':'),
   \ 'sink*':   s:function('s:cmd_history_sink'),
-  \ 'options': '+m --ansi --prompt="Hist:> " --inline-info --header-lines=1 --header-border=horizontal --no-separator --expect=ctrl-e --tiebreak=index'}, a:000)
+  \ 'options': '+m --ansi --prompt="Hist:> " --info inline-right --header-lines=1 --header-border=horizontal --no-separator --expect=ctrl-e --tiebreak=index'}, a:000)
 endfunction
 
 function! s:search_history_sink(lines)
@@ -795,7 +795,7 @@ function! fzf#vim#search_history(...)
   return s:fzf('history-search', {
   \ 'source':  s:history_source('/'),
   \ 'sink*':   s:function('s:search_history_sink'),
-  \ 'options': '+m --ansi --prompt="Hist/> " --inline-info --header-lines=1 --header-border=horizontal --no-separator --expect=ctrl-e --tiebreak=index'}, a:000)
+  \ 'options': '+m --ansi --prompt="Hist/> " --info inline-right --header-lines=1 --header-border=horizontal --no-separator --expect=ctrl-e --tiebreak=index'}, a:000)
 endfunction
 
 function! fzf#vim#history(...)
@@ -981,7 +981,7 @@ function! fzf#vim#buffers(...)
   let sorted = sort(buffers, 's:sort_buffers')
   let tabstop = len(max(sorted)) >= 4 ? 9 : 8
   let s:buffers_delete_file = tempname()
-  let options = ['+m', '-x', '--tiebreak=index', '--ansi', '-d', '\t', '--with-nth', '3..', '-n', '2,1..2', '--prompt', 'Buf> ', '--query', query, '--preview-window', '+{2}/2', '--tabstop', tabstop, '--bind', 'shift-delete:execute-silent(echo {} >> '.s:buffers_delete_file.')+exclude', '--header', '• Press '.s:magenta('SHIFT-DELETE', 'Special').' to unload buffer', '--header-border=horizontal', '--no-separator', '--inline-info']
+  let options = ['+m', '-x', '--tiebreak=index', '--ansi', '-d', '\t', '--with-nth', '3..', '-n', '2,1..2', '--prompt', 'Buf> ', '--query', query, '--preview-window', '+{2}/2', '--tabstop', tabstop, '--bind', 'shift-delete:execute-silent(echo {} >> '.s:buffers_delete_file.')+exclude', '--header', '• Press '.s:magenta('SHIFT-DELETE', 'Special').' to unload buffer', '--header-border=horizontal', '--no-separator', '--info=inline-right']
   if bufnr('') == get(sorted, 0, 0)
     call extend(options, ['--sync', '--bind', 'start:pos:2'])
   endif
@@ -1427,7 +1427,7 @@ function! fzf#vim#commands(...)
   \ 'source':  extend(extend(list[0:0], map(list[1:], 's:format_cmd(v:val)')), s:excmds()),
   \ 'sink*':   s:function('s:command_sink'),
   \ 'options': '--ansi --expect '.s:conf('commands_expect', 'ctrl-x').
-  \            ' --tiebreak=index --header-lines 1 -x --prompt "Commands> " -n2,3,2..3 --tabstop=1 -d "\t" --list-border --header-border inline --inline-info --no-separator'}, a:000)
+  \            ' --tiebreak=index --header-lines 1 -x --prompt "Commands> " -n2,3,2..3 --tabstop=1 -d "\t" --list-border --header-border inline --info inline-right --no-separator'}, a:000)
 endfunction
 
 " ------------------------------------------------------------------
@@ -1493,7 +1493,7 @@ function! fzf#vim#changes(...)
   \ 'source':  all_changes,
   \ 'sink*':   s:function('s:changes_sink'),
   \ '_paste':  1,
-  \ 'options': printf('+m -x --ansi --tiebreak=index --header-lines=1 --cycle --scroll-off 999 --sync --bind start:pos:%d --prompt "Changes> " --list-border --header-border inline --inline-info --no-separator', cursor)}, a:000)
+  \ 'options': printf('+m -x --ansi --tiebreak=index --header-lines=1 --cycle --scroll-off 999 --sync --bind start:pos:%d --prompt "Changes> " --list-border --header-border inline --info inline-right --no-separator', cursor)}, a:000)
 endfunction
 
 " ------------------------------------------------------------------
@@ -1534,7 +1534,7 @@ function! fzf#vim#marks(...) abort
   \ 'source':  extend(list[0:0], map(list[1:], 's:format_mark(v:val)')),
   \ 'sink*':   s:function('s:mark_sink'),
   \ '_paste':  1,
-  \ 'options': '+m -x --ansi --tiebreak=index --header-lines 1 --tiebreak=begin --prompt "Marks> " --list-border --header-border inline --inline-info --no-separator'}, extra)
+  \ 'options': '+m -x --ansi --tiebreak=index --header-lines 1 --tiebreak=begin --prompt "Marks> " --list-border --header-border inline --info inline-right --no-separator'}, extra)
 endfunction
 
 " ------------------------------------------------------------------
@@ -1664,7 +1664,7 @@ function! fzf#vim#windows(...)
   return s:fzf('windows', {
   \ 'source':  extend(['Tab Win     Name'], lines),
   \ 'sink':    s:function('s:windows_sink'),
-  \ 'options': '+m --ansi --tiebreak=begin --header-lines=1 --tabstop=1 -d "\t" --list-border --header-border inline --inline-info --no-separator'}, a:000)
+  \ 'options': '+m --ansi --tiebreak=begin --header-lines=1 --tabstop=1 -d "\t" --list-border --header-border inline --info inline-right --no-separator'}, a:000)
 endfunction
 
 " ------------------------------------------------------------------
@@ -1765,7 +1765,7 @@ function! s:commits(range, buffer_local, args)
   \ 'source':  source,
   \ 'sink*':   s:function('s:commits_sink'),
   \ 'options': s:reverse_list(['--ansi', '--multi', '--tiebreak=index',
-  \   '--inline-info', '--prompt', command.'> ', '--bind=ctrl-s:toggle-sort',
+  \   '--info=inline-right', '--prompt', command.'> ', '--bind=ctrl-s:toggle-sort',
   \   '--header-border=horizontal', '--no-separator',
   \   '--header', '• Press '.s:magenta('CTRL-S', 'Special').' to toggle sort, '.s:magenta('CTRL-Y', 'Special').' to yank commit hashes',
   \   '--expect=ctrl-y,'.join(expect_keys, ',')])
